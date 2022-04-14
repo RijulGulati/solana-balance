@@ -1,0 +1,17 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  height: 70vh;
+}
+
+h1 {
+  font-size: 48px !important;
+  font-weight: bold !important;
+}
+
+.color {
+  color: teal;
+}

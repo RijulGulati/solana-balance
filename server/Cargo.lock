@@ -3187,6 +3187,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "solana-account-balance"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "70f2bf31e1eee6b2e6ea7484a4af9599f09504d1c541e5575b991901d91c9443"
+dependencies = [
+ "solana-client",
+ "solana-sdk",
+]
+
+[[package]]
 name = "solana-account-decoder"
 version = "1.10.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3872,8 +3882,7 @@ dependencies = [
  "actix-web",
  "dotenv",
  "serde",
- "solana-client",
- "solana-program",
+ "solana-account-balance",
 ]
 
 [[package]]

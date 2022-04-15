@@ -3,8 +3,8 @@ use actix_web::{
     web::{self},
     App, HttpResponse, HttpServer, Responder,
 };
-use solana_balance::{self, Cluster, SolanaError};
 use serde::{Deserialize, Serialize};
+use solana_account_balance::Cluster;
 
 mod config;
 
@@ -25,9 +25,14 @@ async fn main() -> std::io::Result<()> {
 }
 
 #[derive(Serialize)]
-struct SolanaResponse<T> {
+struct Response<T> {
     data: T,
     status: u8,
+}
+
+#[derive(Serialize)]
+struct Error {
+    error: String,
 }
 
 #[derive(Deserialize)]
@@ -36,13 +41,19 @@ struct BalanceRequest {
     cluster: Option<i32>,
 }
 
-impl<T> SolanaResponse<T> {
-    pub fn success(t: T) -> SolanaResponse<T> {
-        SolanaResponse { data: t, status: 0 }
+#[derive(Serialize)]
+struct Balance {
+    lamports: u64,
+    sol: f64,
+}
+
+impl<T> Response<T> {
+    pub fn success(t: T) -> Response<T> {
+        Response { data: t, status: 0 }
     }
 
-    pub fn error(t: T) -> SolanaResponse<T> {
-        SolanaResponse { data: t, status: 1 }
+    pub fn error(t: T) -> Response<T> {
+        Response { data: t, status: 1 }
     }
 }
 
@@ -51,14 +62,14 @@ async fn get_balance(req: web::Query<BalanceRequest>) -> impl Responder {
     let pubkey = match &req.pubkey {
         Some(key) => {
             if key.len() == 0 {
-                return HttpResponse::BadRequest().json(SolanaResponse::error(SolanaError {
+                return HttpResponse::BadRequest().json(Response::error(Error {
                     error: String::from("missing pubkey"),
                 }));
             }
             key
         }
         None => {
-            return HttpResponse::BadRequest().json(SolanaResponse::error(SolanaError {
+            return HttpResponse::BadRequest().json(Response::error(Error {
                 error: String::from("missing pubkey"),
             }));
         }
@@ -67,7 +78,7 @@ async fn get_balance(req: web::Query<BalanceRequest>) -> impl Responder {
     let req_cluster = match &req.cluster {
         Some(c) => c,
         None => {
-            return HttpResponse::BadRequest().json(SolanaResponse::error(SolanaError {
+            return HttpResponse::BadRequest().json(Response::error(Error {
                 error: String::from("missing cluster"),
             }));
         }
@@ -81,14 +92,23 @@ async fn get_balance(req: web::Query<BalanceRequest>) -> impl Responder {
         2 => Cluster::Testnet,
         3 => Cluster::Devnet,
         _ => {
-            return HttpResponse::BadRequest().json(SolanaResponse::error(SolanaError {
+            return HttpResponse::BadRequest().json(Response::error(Error {
                 error: String::from("invalid cluster"),
             }))
         }
     };
 
-    match solana_balance::get_solana_balance(&pubkey, cluster) {
-        Ok(balance) => HttpResponse::Ok().json(SolanaResponse::success(balance)),
-        Err(error) => HttpResponse::Ok().json(SolanaResponse::error(error)),
+    match solana_account_balance::get_solana_balance(&pubkey, cluster) {
+        Ok(bal) => {
+            let balance = Balance {
+                lamports: bal.lamports,
+                sol: bal.sol,
+            };
+            HttpResponse::Ok().json(Response::success(balance))
+        }
+        Err(err) => {
+            let error = Error { error: err.error };
+            HttpResponse::Ok().json(Response::error(error))
+        }
     }
 }

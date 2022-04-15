@@ -3,7 +3,7 @@ use actix_web::{
     web::{self},
     App, HttpResponse, HttpServer, Responder,
 };
-use rijulgulati_solana::{self, Cluster, SolanaError};
+use solana_balance::{self, Cluster, SolanaError};
 use serde::{Deserialize, Serialize};
 
 mod config;
@@ -87,7 +87,7 @@ async fn get_balance(req: web::Query<BalanceRequest>) -> impl Responder {
         }
     };
 
-    match rijulgulati_solana::get_solana_balance(&pubkey, cluster) {
+    match solana_balance::get_solana_balance(&pubkey, cluster) {
         Ok(balance) => HttpResponse::Ok().json(SolanaResponse::success(balance)),
         Err(error) => HttpResponse::Ok().json(SolanaResponse::error(error)),
     }

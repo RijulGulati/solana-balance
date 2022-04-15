@@ -60,3 +60,38 @@ pub fn get_solana_balance(pubkey: &str, cluster: Cluster) -> Result<SolanaBalanc
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const CORRECT_ACC_ADDRESS: &str = "9aavjzd4iAbiJHawgS7kunfCJefSRRVKso61vzAX9Ho5";
+    const INCORRECT_ACC_ADDRESS: &str = "wrongaddress";
+    const ACCOUNT_NOT_FOUND: &str = "9aavjzd4iAbiJHawgS7kunfCJefSRRVKso61vzAX9Ho6"; // notice 6 at the end
+
+    #[test]
+    fn get_balance() {
+        let result = get_solana_balance(CORRECT_ACC_ADDRESS, Cluster::Devnet).unwrap();
+        assert_eq!(result.lamports, 599985000);
+        assert_eq!(result.sol, 0.599985);
+    }
+
+    #[test]
+    fn invalid_pubkey() {
+        let result = get_solana_balance(INCORRECT_ACC_ADDRESS, Cluster::Devnet)
+            .err()
+            .unwrap();
+        assert_eq!(result.error, "invalid pubkey");
+    }
+
+    #[test]
+    fn acc_not_found() {
+        let result = get_solana_balance(ACCOUNT_NOT_FOUND, Cluster::Devnet)
+            .err()
+            .unwrap();
+        assert_eq!(
+            result.error,
+            format!("AccountNotFound: pubkey={}", ACCOUNT_NOT_FOUND)
+        );
+    }
+}

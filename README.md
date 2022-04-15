@@ -1,12 +1,12 @@
-# solana-balance Web application
+# Solana Balance Web application
 
 ![Solana Balance](solana-balance.png 'Solana Balance')
 
-solana-balance is a simple web application to fetch account balance from Solana Mainnet/Testnet/Devnet cluster.
+solana-balance-web is a simple web application to fetch account balance from Solana Mainnet/Testnet/Devnet cluster.
 
-The server code is written in [Rust](https://www.rust-lang.org/) using [actix-web](https://actix.rs/) framework. Further, account balance from solana clusters is fetched using solana SDK library ([solana-client](https://crates.io/crates/solana-client), [solana-program](https://crates.io/crates/solana-program)).
+The server code is written in [Rust](https://www.rust-lang.org/) using [actix-web](https://actix.rs/) framework. UX client code is written in ReactJs.
 
-The client (UX) code is a simple ReactJs application.
+Rust server uses [`solana-account-balance`](https://crates.io/crates/solana-account-balance) crate to fetch account balance. Its code is available on [GitHub](https://github.com/RijulGulati/solana-account-balance).
 
 Detailed instruction for building and running both client and server code is present in their respective directories.
 

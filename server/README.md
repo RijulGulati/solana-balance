@@ -17,6 +17,12 @@ $ cargo build
 $ cargo run
 ```
 
+**Run Tests**
+
+```bash
+$ cargo test
+```
+
 The server starts at `http://localhost:8100`. The host and port can be configured in `.env` file.
 
 ### Endpoints and parameters

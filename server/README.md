@@ -3,6 +3,8 @@
 This is the server application that connects with solana cluster to fetch account balance from Mainnet/Testnet/Devnet clusters.
 Requires [Rust](https://www.rust-lang.org/tools/install) installed in system.
 
+It uses [`solana-account-balance`](https://crates.io/crates/solana-account-balance) crate as dependency to connect with solana cluster and fetch account balance. `solana-account-balance` crate code is available on [GitHub](https://github.com/RijulGulati/solana-account-balance).
+
 ## Build instructions
 
 **1) Build**
@@ -15,12 +17,6 @@ $ cargo build
 
 ```bash
 $ cargo run
-```
-
-**Run Tests**
-
-```bash
-$ cargo test
 ```
 
 The server starts at `http://localhost:8100`. The host and port can be configured in `.env` file.
